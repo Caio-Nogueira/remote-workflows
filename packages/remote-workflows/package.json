@@ -1,0 +1,83 @@
+{
+  "name": "@cloudflare/remote-workflows",
+  "version": "0.1.0",
+  "description": "Run Cloudflare Workflow implementations on private JavaScript infrastructure.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "sideEffects": false,
+  "bin": {
+    "remote-workflows-connect": "./dist/bin/connect.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server/index.d.ts",
+      "import": "./dist/server/index.js"
+    },
+    "./node": {
+      "types": "./dist/node/index.d.ts",
+      "import": "./dist/node/index.js"
+    },
+    "./bun": {
+      "types": "./dist/bun/index.d.ts",
+      "import": "./dist/bun/index.js"
+    },
+    "./worker": {
+      "types": "./dist/worker/index.d.ts",
+      "import": "./dist/worker/index.js"
+    },
+    "./alchemy": {
+      "types": "./dist/alchemy/index.d.ts",
+      "import": "./dist/alchemy/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "pnpm run clean && tsc -p tsconfig.build.json && pnpm run check:declarations",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "clean": "node --eval \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "check:declarations": "node test/declaration-leaks.mjs",
+    "prepack": "pnpm run build"
+  },
+  "dependencies": {
+    "capnweb": "^0.12.0",
+    "ws": "^8.21.3",
+    "zod": "^4.5.4"
+  },
+  "peerDependencies": {
+    "@effect/platform-node": ">=4.0.0-rc.112 <5",
+    "alchemy": ">=2.0.0-beta.76 <3",
+    "effect": ">=4.0.0-rc.112 <5"
+  },
+  "peerDependenciesMeta": {
+    "@effect/platform-node": {
+      "optional": true
+    },
+    "alchemy": {
+      "optional": true
+    },
+    "effect": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@effect/platform-node": "4.0.0-rc.112",
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "@types/ws": "^8.18.1",
+    "alchemy": "2.0.0-beta.76",
+    "effect": "4.0.0-rc.112",
+    "typescript": "catalog:"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

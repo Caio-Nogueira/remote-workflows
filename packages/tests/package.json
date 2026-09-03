@@ -1,0 +1,24 @@
+{
+  "name": "remote-workflows-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:bun": "bun test ./src/bun-smoke.bun.ts"
+  },
+  "dependencies": {
+    "@cloudflare/remote-workflows": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "@types/ws": "^8.18.1",
+    "capnweb": "^0.12.0",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "ws": "^8.21.3",
+    "zod": "^4.5.4"
+  }
+}

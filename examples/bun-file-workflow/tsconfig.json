@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "customConditions": ["bun"],
+    "types": ["bun", "@cloudflare/workers-types"]
+  },
+  "include": ["alchemy.run.ts", "src/**/*.ts"]
+}

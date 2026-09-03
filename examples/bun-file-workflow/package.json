@@ -1,0 +1,23 @@
+{
+  "name": "remote-workflows-bun-file-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "connect": "remote-workflows-connect --stack BunFileWorkflow --workflow WriteFile",
+    "deploy": "alchemy deploy",
+    "destroy": "alchemy destroy",
+    "serve": "bun run src/server.ts"
+  },
+  "dependencies": {
+    "@cloudflare/remote-workflows": "workspace:*",
+    "@effect/platform-node": "4.0.0-rc.112",
+    "alchemy": "2.0.0-beta.76",
+    "effect": "4.0.0-rc.112"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  }
+}

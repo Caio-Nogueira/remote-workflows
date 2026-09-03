@@ -1,0 +1,9 @@
+node_modules/
+.context
+dist/
+coverage/
+.alchemy/
+.DS_Store
+*.log
+workflow-output.txt
+*.PLAN.md

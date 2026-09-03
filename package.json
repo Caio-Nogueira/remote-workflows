@@ -1,0 +1,16 @@
+{
+  "name": "remote-workflows-monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.15.1",
+  "scripts": {
+    "build": "pnpm --filter=@cloudflare/remote-workflows build",
+    "check": "pnpm run build && pnpm -r run check",
+    "clean": "pnpm -r run clean",
+    "test": "pnpm run build && pnpm --filter=remote-workflows-tests test",
+    "test:bun": "pnpm run build && pnpm --filter=remote-workflows-tests test:bun"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
