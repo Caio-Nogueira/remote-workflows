@@ -95,6 +95,7 @@ export function RemoteWorkflow<Params = unknown>(
     const relayWorker = yield* Cloudflare.Worker(`${id}Relay`, {
       compatibility: { date: "2026-09-01" },
       env: {
+        ...input.env,
         REMOTE_WORKFLOW_PATH: input.origin.path,
         REMOTE_WORKFLOW_SERVER: vpcService,
         ...generatedRegistration,

@@ -15,6 +15,9 @@ import {
   type RemoteWorkflowTarget,
 } from "@cloudflare/remote-workflows/server";
 import { serveWorkflow } from "@cloudflare/remote-workflows/node";
+import {
+  createRemoteWorkflowEnvironment,
+} from "../../remote-workflows/src/worker/environment.js";
 
 class FakeStep extends RpcTarget {
   async do<Output>(
@@ -42,6 +45,23 @@ class FakeStep extends RpcTarget {
 
   async waitForEvent(): Promise<never> {
     throw new Error("No event was configured.");
+  }
+}
+
+class CounterResult {
+  constructor(readonly value: number) {}
+}
+
+class CounterBinding {
+  #value = 1;
+
+  async add(amount: number): Promise<CounterResult> {
+    this.#value += amount;
+    return new CounterResult(this.#value);
+  }
+
+  dup(): never {
+    throw new Error("The binding's dup method must remain reserved.");
   }
 }
 
@@ -142,12 +162,14 @@ describe("Node workflow server", () => {
 
   it("forwards a step capability and callback in both directions", async () => {
     class GreetingWorkflow {
+      declare readonly env: { GREETING: string };
+
       async run(
         remoteEvent: Readonly<WorkflowEvent<{ name: string }>>,
         step: WorkflowStep,
       ): Promise<string> {
         return await step.do("greet", async () => {
-          return `Hello, ${remoteEvent.payload.name}`;
+          return `${this.env.GREETING}, ${remoteEvent.payload.name}`;
         });
       }
     }
@@ -158,9 +180,43 @@ describe("Node workflow server", () => {
     const result = await remote.run(
       event,
       new FakeStep() as unknown as WorkflowStep,
+      { GREETING: "Hello" },
     );
 
     expect(result).toBe("Hello, Ada");
+    remote[Symbol.dispose]();
+  });
+
+  it("forwards generic binding capabilities and host results", async () => {
+    class CounterWorkflow {
+      declare readonly env: {
+        COUNTER: {
+          add(amount: number): Promise<{ readonly value: number }>;
+        };
+      };
+
+      async run(
+        _event: Readonly<WorkflowEvent<unknown>>,
+        step: WorkflowStep,
+      ): Promise<number> {
+        return await step.do("increment", async () => {
+          const result = await this.env.COUNTER.add(2);
+          return await result.value;
+        });
+      }
+    }
+
+    const { url } = await startServer(CounterWorkflow);
+    const remote = await connect(url);
+    const result = await remote.run(
+      event,
+      new FakeStep() as unknown as WorkflowStep,
+      createRemoteWorkflowEnvironment({
+        COUNTER: new CounterBinding(),
+      }),
+    );
+
+    expect(result).toBe(3);
     remote[Symbol.dispose]();
   });
 

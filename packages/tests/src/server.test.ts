@@ -34,7 +34,7 @@ describe("upgrade validation", () => {
     const result = validateUpgrade(
       request({
         Upgrade: "websocket",
-        "x-remote-workflow-protocol": "1",
+        "x-remote-workflow-protocol": "2",
       }),
     );
 
@@ -50,7 +50,7 @@ describe("upgrade validation", () => {
     );
 
     expect(result).toEqual({
-      headers: { [REMOTE_WORKFLOW_PROTOCOL_HEADER]: "1" },
+      headers: { [REMOTE_WORKFLOW_PROTOCOL_HEADER]: "2" },
       ok: false,
       status: 426,
     });
@@ -58,13 +58,19 @@ describe("upgrade validation", () => {
 });
 
 describe("runtime validation", () => {
-  it("accepts workflow events and step capabilities", async () => {
+  it("injects the remote environment into the workflow", async () => {
     class TestWorkflow {
-      async run(): Promise<void> {}
+      declare readonly env: { NAME: string };
+
+      async run(): Promise<string> {
+        return this.env.NAME;
+      }
     }
 
     const target = createWorkflowTarget(TestWorkflow);
-    await expect(target.run(event, step)).resolves.toBeUndefined();
+    await expect(
+      target.run(event, step, { NAME: "remote" }),
+    ).resolves.toBe("remote");
   });
 
   it("rejects malformed workflow input", async () => {
@@ -74,9 +80,12 @@ describe("runtime validation", () => {
 
     const target = createWorkflowTarget(TestWorkflow);
     await expect(
-      target.run({ ...event, timestamp: "now" }, step),
+      target.run({ ...event, timestamp: "now" }, step, {}),
     ).rejects.toThrow(z.ZodError);
-    await expect(target.run(event, { do() {} })).rejects.toThrow(z.ZodError);
+    await expect(target.run(event, { do() {} }, {})).rejects.toThrow(
+      z.ZodError,
+    );
+    await expect(target.run(event, step, [])).rejects.toThrow(z.ZodError);
   });
 
   it("rejects invalid server paths", () => {

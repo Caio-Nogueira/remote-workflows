@@ -1,6 +1,6 @@
 # Remote Workflows
 
-Remote Workflows keeps Cloudflare Workflow state in Cloudflare and runs the workflow implementation on a private Node.js or Bun server. A relay Worker forwards the engine's native `WorkflowStep` capability through Cap'n Web. The library does not copy or reimplement step methods.
+Remote Workflows keeps Cloudflare Workflow state in Cloudflare and runs the workflow implementation on a private Node.js or Bun server. A relay Worker forwards the engine's native `WorkflowStep` and configured Worker bindings through Cap'n Web. The library does not copy or reimplement step or binding methods.
 
 This package is experimental. Workers VPC WebSocket transport and full Workflow lifecycle behavior still need validation against a live Cloudflare account.
 
@@ -69,7 +69,11 @@ import * as Cloudflare from "alchemy/Cloudflare";
 import * as Effect from "effect/Effect";
 
 export default Effect.gen(function* () {
+  const artifacts = yield* Cloudflare.R2.Bucket("Artifacts");
   const orders = yield* RemoteWorkflow<{ name: string }>("Orders", {
+    env: {
+      ARTIFACTS: artifacts,
+    },
     origin: {
       port: 8789,
       path: "/rpc",
@@ -93,6 +97,38 @@ The construct creates:
 - A Cloudflare Workflow registration for the relay's `RemoteWorkflow` export.
 
 It returns the Workflow binding, Cloudflare resources, connector token under `tunnel.token`, and loopback server settings under `server`.
+
+## Worker bindings
+
+Every relay binding is forwarded to the remote workflow, including the relay's own transport bindings. With Alchemy, declare additional bindings through the construct's `env` property. Other deployment tools can bind resources directly to the relay Worker.
+
+The outer environment crosses by value. Primitive variables remain ordinary values, while objects with custom prototypes are wrapped in generic Cap'n Web capabilities. The remote server installs that environment as a read-only `env` property on the workflow instance:
+
+```ts
+interface Env {
+  ARTIFACTS: R2Bucket;
+}
+
+class ArtifactWorkflow {
+  declare readonly env: Env;
+
+  async run(
+    event: Readonly<WorkflowEvent<{ key: string; value: string }>>,
+    step: WorkflowStep,
+  ): Promise<void> {
+    await step.do("write artifact", async () => {
+      await this.env.ARTIFACTS.put(
+        event.payload.key,
+        event.payload.value,
+      );
+    });
+  }
+}
+```
+
+The binding and any host objects it returns remain in the relay Worker. A proxy-backed `RpcTarget` forwards methods and getters to the native object and recursively wraps unsupported host results as more capabilities. Cap'n Web serializes method arguments, plain return values, and supported built-ins normally.
+
+Remote method calls are asynchronous. Cap'n Web promise pipelining preserves common fluent calls, but properties on a returned host capability must be awaited. Symbol APIs and names reserved by Cap'n Web stubs are not available through the generic wrapper.
 
 Set `workflowName` when the account-global Cloudflare Workflow name must be explicit:
 

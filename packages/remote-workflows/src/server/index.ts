@@ -9,5 +9,6 @@ export {
   createWorkflowTarget,
   WorkflowRpcTarget,
   type RemoteWorkflowClass,
+  type RemoteWorkflowEnvironment,
   type RemoteWorkflowTarget,
 } from "./target.js";

@@ -27,6 +27,7 @@ export const workflowNameSchema = z
 
 export const remoteWorkflowPropsSchema = z.object({
   adopt: z.boolean().optional(),
+  env: z.record(z.string(), z.unknown()).default({}),
   origin: z.object({
     path: workflowPathSchema,
     port: z.int().min(1).max(65_535),
@@ -48,6 +49,17 @@ export const workflowEventSchema = z.object({
   timestamp: z.date(),
   workflowName: z.string().min(1),
 });
+
+export const workflowEnvironmentSchema = z.custom<Record<string, unknown>>(
+  (value) => {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
+      return false;
+    }
+    const prototype = Object.getPrototypeOf(value);
+    return prototype === null || prototype === Object.prototype;
+  },
+  "Expected a remote workflow environment",
+);
 
 export const workflowStepSchema = z.custom(
   (value) =>

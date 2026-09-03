@@ -9,6 +9,7 @@ import {
   REMOTE_WORKFLOW_PROTOCOL_VERSION,
 } from "../server/protocol.js";
 import type { RemoteWorkflowTarget } from "../server/target.js";
+import { createRemoteWorkflowEnvironment } from "./environment.js";
 
 interface VpcServiceBinding {
   fetch(input: Request): Promise<Response>;
@@ -46,7 +47,11 @@ export class RemoteWorkflow extends WorkflowEntrypoint<
     );
     response.webSocket.accept();
     try {
-      return await remote.run(event, step);
+      return await remote.run(
+        event,
+        step,
+        createRemoteWorkflowEnvironment(this.env),
+      );
     } finally {
       remote[Symbol.dispose]();
     }

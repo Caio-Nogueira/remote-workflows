@@ -1,4 +1,4 @@
-export const REMOTE_WORKFLOW_PROTOCOL_VERSION = "1";
+export const REMOTE_WORKFLOW_PROTOCOL_VERSION = "2";
 export const REMOTE_WORKFLOW_PROTOCOL_HEADER = "x-remote-workflow-protocol";
 
 export interface RemoteWorkflowUpgradeRequest {

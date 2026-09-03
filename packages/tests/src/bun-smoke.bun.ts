@@ -14,6 +14,9 @@ import {
   REMOTE_WORKFLOW_PROTOCOL_HEADER,
   REMOTE_WORKFLOW_PROTOCOL_VERSION,
 } from "@cloudflare/remote-workflows/server";
+import {
+  createRemoteWorkflowEnvironment,
+} from "../../remote-workflows/src/worker/environment.js";
 
 class FakeStep extends RpcTarget {
   async do<Output>(name: string, callback: unknown): Promise<Output> {
@@ -33,6 +36,19 @@ class FakeStep extends RpcTarget {
 
   async waitForEvent(): Promise<never> {
     throw new Error("No event was configured.");
+  }
+}
+
+class CounterResult {
+  constructor(readonly value: number) {}
+}
+
+class CounterBinding {
+  #value = 1;
+
+  async add(amount: number): Promise<CounterResult> {
+    this.#value += amount;
+    return new CounterResult(this.#value);
   }
 }
 
@@ -121,14 +137,22 @@ afterEach(() => {
 
 test("Bun serves a bidirectional workflow session", async () => {
   class GreetingWorkflow {
+    declare readonly env: {
+      COUNTER: {
+        add(amount: number): Promise<{ readonly value: number }>;
+      };
+      GREETING: string;
+    };
+
     async run(
       event: Readonly<WorkflowEvent<{ name: string }>>,
       step: WorkflowStep,
     ): Promise<string> {
-      return await step.do(
-        "greet",
-        async () => `Hello, ${event.payload.name}`,
-      );
+      return await step.do("greet", async () => {
+        const counter = await this.env.COUNTER.add(1);
+        const value = await counter.value;
+        return `${this.env.GREETING}, ${event.payload.name}:${value}`;
+      });
     }
   }
 
@@ -142,7 +166,11 @@ test("Bun serves a bidirectional workflow session", async () => {
     `ws://127.0.0.1:${server.port}/rpc`,
   );
   const remote = newWebSocketRpcSession<{
-    run(event: unknown, step: WorkflowStep): Promise<string>;
+    run(
+      event: unknown,
+      step: WorkflowStep,
+      env: Record<string, unknown>,
+    ): Promise<string>;
   }>(webSocket);
 
   const result = await remote.run(
@@ -153,9 +181,13 @@ test("Bun serves a bidirectional workflow session", async () => {
       workflowName: "GreetingWorkflow",
     },
     new FakeStep() as unknown as WorkflowStep,
+    createRemoteWorkflowEnvironment({
+      COUNTER: new CounterBinding(),
+      GREETING: "Hello",
+    }),
   );
 
-  expect(result).toBe("Hello, Bun");
+  expect(result).toBe("Hello, Bun:2");
   remote[Symbol.dispose]();
 });
 
