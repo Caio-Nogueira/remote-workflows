@@ -1,0 +1,25 @@
+packages/remote-workflows/src/alchemy/index.ts
+  s_67eb25d1752112::t_dee82047b2884c 98
+packages/remote-workflows/src/schemas.ts
+  s_67eb25d1752112::t_65dae9ebc64f57 3,31-41,64-74
+packages/remote-workflows/src/server/index.ts
+  s_67eb25d1752112::t_7f109f3792ff82 2,13
+packages/remote-workflows/src/server/target.ts
+  s_67eb25d1752112::t_4e082e665856ef 3,17-18,20-24,29,36-40,43-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ca6cf5ced1891872144219d440f79c799fbf76db",
+  "prompts": {},
+  "sessions": {
+    "s_67eb25d1752112": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "01a066cb-7275-7735-94c2-a9fa75f55ebf",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Caio Nogueira <caio@cloudflare.com>"
+    }
+  }
+}
