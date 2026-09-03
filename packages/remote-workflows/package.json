@@ -9,8 +9,7 @@
     "remote-workflows-connect": "./dist/bin/connect.js"
   },
   "files": [
-    "dist",
-    "README.md"
+    "dist"
   ],
   "exports": {
     ".": {
