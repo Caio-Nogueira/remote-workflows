@@ -1,12 +1,12 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "remote-workflows-wrangler-bun-file-relay",
+  "name": "vaultwarden-backup-relay",
   "main": "src/relay.ts",
   "compatibility_date": "2026-09-01",
   "workers_dev": false,
   "preview_urls": false,
   "vars": {
-    "REMOTE_WORKFLOW_PATH": "/write-file"
+    "REMOTE_WORKFLOW_PATH": "/vaultwarden-backup"
   },
   "vpc_services": [
     {
@@ -14,18 +14,18 @@
       "service_id": "<VPC_SERVICE_ID>"
     }
   ],
-  "services": [
+  "r2_buckets": [
     {
-      "binding": "SERVICE_BINDING",
-      "service": "remote-workflows-wrangler-bun-file-relay",
-      "entrypoint": "ServiceBinding"
+      "binding": "VAULTWARDEN_BACKUPS",
+      "bucket_name": "vaultwarden-backup"
     }
   ],
   "workflows": [
     {
       "binding": "REMOTE_WORKFLOW_REGISTRATION",
-      "name": "WranglerBunFileWorkflow",
-      "class_name": "RemoteWorkflow"
+      "name": "VaultwardenBackupWorkflow",
+      "class_name": "RemoteWorkflow",
+      "schedules": ["0 */6 * * *"]
     }
   ]
 }

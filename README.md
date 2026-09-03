@@ -71,10 +71,10 @@ import * as Cloudflare from "alchemy/Cloudflare";
 import * as Effect from "effect/Effect";
 
 export default Effect.gen(function* () {
-  const artifacts = yield* Cloudflare.R2.Bucket("Artifacts");
+  const kv = yield* Cloudflare.KV.Namespace("MyKV");
   const orders = yield* RemoteWorkflow<{ name: string }>("Orders", {
     env: {
-      ARTIFACTS: artifacts,
+      MY_KV: kv,
     },
     origin: {
       port: 8789,
@@ -102,7 +102,7 @@ It returns the Workflow binding, Cloudflare resources, connector token under `tu
 
 ## Deploy with Wrangler
 
-The [`bun-file-workflow-wrangler`](./examples/bun-file-workflow-wrangler/) example deploys the relay without Alchemy. The same bundle exports a named `WorkerEntrypoint` that the relay calls through a self Service binding.
+The [`r2-backup-example`](./examples/r2-backup-example/) deploys a scheduled Vaultwarden backup with Wrangler. It runs the backup implementation on a private Bun host, forwards an R2 binding to that implementation, and uploads a validated ZIP from the host to R2.
 
 The example README lists the Wrangler commands that create the Tunnel and loopback VPC Service, deploy the Worker, start the connector, trigger the Workflow, and remove the resources.
 
@@ -114,18 +114,18 @@ The outer environment crosses by value. Primitive variables remain ordinary valu
 
 ```ts
 interface Env {
-  ARTIFACTS: R2Bucket;
+  MY_KV: KVNamespace;
 }
 
-class ArtifactWorkflow {
+class ExampleWorkflow {
   declare readonly env: Env;
 
   async run(
     event: Readonly<WorkflowEvent<{ key: string; value: string }>>,
     step: WorkflowStep,
   ): Promise<void> {
-    await step.do("write artifact", async () => {
-      await this.env.ARTIFACTS.put(
+    await step.do("write value", async () => {
+      await this.env.MY_KV.put(
         event.payload.key,
         event.payload.value,
       );

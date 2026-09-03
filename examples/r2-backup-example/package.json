@@ -1,9 +1,10 @@
 {
-  "name": "remote-workflows-wrangler-bun-file-example",
+  "name": "remote-workflows-r2-backup-example",
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "tsc --noEmit",
+    "check": "wrangler types --include-runtime=false --check && tsc --noEmit",
+    "types": "wrangler types --include-runtime=false",
     "serve": "bun run src/server.ts"
   },
   "dependencies": {

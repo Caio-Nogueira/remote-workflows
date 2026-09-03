@@ -5,5 +5,5 @@
     "customConditions": ["bun"],
     "types": ["bun", "@cloudflare/workers-types"]
   },
-  "include": ["service-binding/**/*.ts", "src/**/*.ts"]
+  "include": ["worker-configuration.d.ts", "src/**/*.ts"]
 }
