@@ -1,0 +1,81 @@
+.gitignore
+  s_6be2a2ac4581dd::t_3bdf901b398679 1-9
+.npmrc
+  s_d4e47ac9577db8::t_37135ea1d689ee 1
+packages/remote-workflows/src/index.ts
+  s_cd1266a818a0b7::t_8b58a76c15885d 1
+packages/remote-workflows/src/node/index.ts
+  s_cd1266a818a0b7::t_42b92702ae7b2f 1-192
+packages/remote-workflows/src/server/index.ts
+  s_cd1266a818a0b7::t_fb33a7dc826a00 1-13
+packages/remote-workflows/src/server/target.ts
+  s_cd1266a818a0b7::t_87da407072fb8d 1-46
+packages/remote-workflows/src/worker/index.ts
+  s_cd1266a818a0b7::t_c529c3db7b0e74 1-54
+packages/remote-workflows/test/declaration-leaks.mjs
+  s_fc46ac3b198a24::t_726b02092374b3 1-31
+packages/remote-workflows/tsconfig.build.json
+  s_cd1266a818a0b7::t_2841e2cc65ed2c 1-11
+packages/tests/src/bun-smoke.bun.ts
+  s_cd1266a818a0b7::t_8557e8c6e79301 1-211
+packages/tests/src/node.test.ts
+  s_cd1266a818a0b7::t_97e86ac8cebf6e 1-227
+packages/tests/src/server.test.ts
+  s_cd1266a818a0b7::t_dc6e246ef0924a 1-103
+packages/tests/src/types.test.ts
+  s_cd1266a818a0b7::t_c3bfc899f8c5af 1-37
+packages/tests/tsconfig.json
+  s_cd1266a818a0b7::t_a8b8913c228a53 1-8
+packages/tests/vitest.config.ts
+  s_cd1266a818a0b7::t_d75fa77b0aefe5 1-8
+pnpm-lock.yaml
+  s_022a355304eac2::t_dd20b0a19c7b0b 1-3675
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "e06224ae1000e4364d9ed12e0760a396e69148c3",
+  "prompts": {},
+  "sessions": {
+    "s_022a355304eac2": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "01a06432-f0cf-7a56-82b4-f0dbb561ff47",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Caio Nogueira <caio@cloudflare.com>"
+    },
+    "s_6be2a2ac4581dd": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "01a0667a-b7f7-76d2-930a-f6e3b21af291",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Caio Nogueira <caio@cloudflare.com>"
+    },
+    "s_cd1266a818a0b7": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "01a0641b-f00d-7350-a2be-accbeb6cd690",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Caio Nogueira <caio@cloudflare.com>"
+    },
+    "s_d4e47ac9577db8": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "01a062bb-a3b6-7da4-b802-3f11f7b4caad",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Caio Nogueira <caio@cloudflare.com>"
+    },
+    "s_fc46ac3b198a24": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "01a063db-fe54-77ea-b81e-d0a1af94aa8d",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "Caio Nogueira <caio@cloudflare.com>"
+    }
+  }
+}
