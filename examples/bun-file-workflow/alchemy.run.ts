@@ -2,7 +2,6 @@ import { RemoteWorkflow } from "@cloudflare/remote-workflows/alchemy";
 import * as Alchemy from "alchemy";
 import * as Cloudflare from "alchemy/Cloudflare";
 import * as Effect from "effect/Effect";
-import { origin } from "./src/origin.ts";
 import type { WriteFilePayload } from "./src/workflow.ts";
 
 export default Alchemy.Stack(
@@ -13,7 +12,10 @@ export default Alchemy.Stack(
   },
   Effect.gen(function* () {
     const workflow = yield* RemoteWorkflow<WriteFilePayload>("WriteFile", {
-      origin,
+      origin: {
+        path: "/write-file",
+        port: 8789,
+      },
       workflowName: "BunFileWorkflow",
     });
 

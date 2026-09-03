@@ -100,6 +100,12 @@ The construct creates:
 
 It returns the Workflow binding, Cloudflare resources, connector token under `tunnel.token`, and loopback server settings under `server`.
 
+## Deploy with Wrangler
+
+The [`bun-file-workflow-wrangler`](./examples/bun-file-workflow-wrangler/) example deploys the relay without Alchemy. The same bundle exports a named `WorkerEntrypoint` that the relay calls through a self Service binding.
+
+The example README lists the Wrangler commands that create the Tunnel and loopback VPC Service, deploy the Worker, start the connector, trigger the Workflow, and remove the resources.
+
 ## Worker bindings
 
 Every relay binding is forwarded to the remote workflow, including the relay's own transport bindings. With Alchemy, declare additional bindings through the construct's `env` property. Other deployment tools can bind resources directly to the relay Worker.

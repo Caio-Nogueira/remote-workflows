@@ -3,6 +3,7 @@ node_modules/
 dist/
 coverage/
 .alchemy/
+.wrangler/
 .DS_Store
 *.log
 workflow-output.txt
