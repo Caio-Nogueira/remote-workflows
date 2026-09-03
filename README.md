@@ -1,21 +1,23 @@
 # Remote Workflows
 
-Remote Workflows keeps Cloudflare Workflow state in Cloudflare and runs the workflow implementation on a private Node.js or Bun server. A relay Worker forwards the engine's native `WorkflowStep` and configured Worker bindings through Cap'n Web. The library does not copy or reimplement step or binding methods.
+Remote Workflows keeps Cloudflare Workflow state in Cloudflare and runs the workflow implementation on a private Node.js or Bun server. A relay Worker forwards the engine's native `WorkflowStep` and configured Worker bindings through Cap'n Web. The project does not copy or reimplement step or binding methods.
 
-This package is experimental. Workers VPC WebSocket transport and full Workflow lifecycle behavior still need validation against a live Cloudflare account.
+## Status
 
-## Install
+This is an independent experimental project. It is not an official Cloudflare project, product, or supported library. Workers VPC WebSocket transport and full Workflow lifecycle behavior still need validation against a live Cloudflare account.
 
-```sh
-npm install @cloudflare/remote-workflows
-npm install --save-dev @cloudflare/workers-types
-```
+The package is not published to npm. The `@cloudflare/remote-workflows` name in the examples is the local workspace package name and does not imply Cloudflare ownership or endorsement.
 
-Install the Alchemy peers only when using the Alchemy construct:
+## Set up from source
 
 ```sh
-bun add alchemy@latest effect@rc @effect/platform-node@rc
+git clone https://github.com/Caio-Nogueira/remote-workflows.git
+cd remote-workflows
+pnpm install
+pnpm build
 ```
+
+Use pnpm 10.15.1 and Node.js 22 or newer. The workspace install includes the optional Alchemy dependencies used by the deployment construct.
 
 ## Run a Node server
 
@@ -170,7 +172,7 @@ On a VM, run both processes on the same machine. In Kubernetes, run them in the 
 
 ## Workflow types
 
-Workflow implementations use the official Cloudflare types through type-only imports from `cloudflare:workers`. Wrangler-generated types or `@cloudflare/workers-types` must provide that module during type checking. Do not extend `WorkflowEntrypoint` in Node or Bun because it is a workerd runtime class.
+Workflow implementations use Cloudflare runtime types through type-only imports from `cloudflare:workers`. Wrangler-generated types or `@cloudflare/workers-types` must provide that module during type checking. Do not extend `WorkflowEntrypoint` in Node or Bun because it is a workerd runtime class.
 
 The forwarded `WorkflowStep` is the engine-owned RPC capability. Calls such as `step.do`, `step.sleep`, `step.sleepUntil`, and `step.waitForEvent` go back to the Workflows engine. Callbacks, rollback handlers, and dynamic retry-delay functions cross the same connection in the other direction.
 
